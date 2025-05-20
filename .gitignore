@@ -1,0 +1,63 @@
+.vscode/
+.venv/
+.eggs/
+env/
+*.DS_Store
+.coverage
+htmlcov/
+# interpreter bytecode
+__pycache__/
+
+# experiment results
+runs/
+videos/
+logs/
+multi_object_tracking/track_results
+
+# experiment files
+*.pkl
+
+# partial downlaods
+*.part
+
+# Downloaded weight 
+weights/
+
+# evaluation tools folder
+val_utils/
+
+# zip files
+*.zip
+
+# exports
+*_openvino_model
+*.torchscript
+*.pt
+*.pth
+*.onnx
+*.engine
+
+# interactive plots
+*.html
+
+# tf models
+*saved_model/
+tf_models/
+
+# distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# cmc debug images
+boxmot/motion/cmc/*.jpg
+
+# json outputs
+*_output.json
+
+# datasets
+data/
+bpbreid/AnChang10/
+bpbreid/AnChang110/
+bpbreid/logs/
+bpbreid/video_datasets/
