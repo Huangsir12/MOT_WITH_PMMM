@@ -1,0 +1,21 @@
+data:
+  height: 384
+  root: /root/autodl-tmp/bpbreid/Market-1501-v15.09.15
+  sources: [market1501]
+  targets: [market1501]
+  transforms: [rc, re]
+  width: 128
+inference: {dataset_folder: track_results/0310-1203, dataset_name: AnChang10, enabled: true,
+  gallery_features_path: '', load_gallery_features: false, num_classes: 21, output_folder: '',
+  save_features: false}
+model:
+  bpbreid:
+    backbone: hrnet32
+    learnable_attention_enabled: true
+    mask_filtering_testing: true
+    mask_filtering_training: false
+    masks: {dir: pifpaf_maskrcnn_filtering, preprocess: five_v}
+    test_embeddings: [bn_foreg, parts]
+  load_config: true
+  load_weights: /root/autodl-tmp/bpbreid/torchreid/logs/560656311/2025_02_20_11_57/job-560656311_60_model.pth.tar
+  name: bpbreid
