@@ -61,3 +61,6 @@ bpbreid/AnChang10/
 bpbreid/AnChang110/
 bpbreid/logs/
 bpbreid/video_datasets/
+
+# history
+.history/
