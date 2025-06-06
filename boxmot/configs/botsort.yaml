@@ -1,0 +1,72 @@
+track_high_thresh:
+  type: uniform
+  default: 0.5  # from the default parameters
+  range: [0.3, 0.7]
+
+track_low_thresh:
+  type: uniform
+  default: 0.1  # from the default parameters
+  range: [0.1, 0.3]
+
+new_track_thresh:
+  type: uniform
+  default: 0.3  # from the default parameters
+  range: [0.1, 0.9]
+
+track_buffer:
+  type: randint
+  default: 12 # from the default parameters
+  range: [10, 80]
+
+match_thresh:
+  type: uniform
+  default: 0.8  # from the default parameters
+  range: [0.1, 0.9]
+
+proximity_thresh:
+  type: uniform
+  default: 0.5  # from the default parameters
+  range: [0.25, 0.75]
+
+appearance_thresh:
+  type: uniform
+  default: 0.25  # from the default parameters
+  range: [0.1, 0.8]
+
+cmc_method:
+  type: choice
+  default: ecc  # from the default parameters
+  options: [sof, ecc]
+
+
+# track_high_thresh：
+# 作用：设置跟踪器开始跟踪一个新目标所需的最低置信度阈值。
+# 调整：调低可能导致跟踪器对检测结果更敏感，可能会跟踪更多目标，但也可能导致跟踪噪声。
+# 调高可能导致跟踪器更保守，只跟踪高置信度的目标，可能漏掉一些目标。
+# track_low_thresh：
+# 作用：设置跟踪器在决定一个检测是否属于现有跟踪时允许的最低置信度阈值。
+# 调整：调低可能导致跟踪器更不容易丢失目标，但也可能跟踪到错误的检测。
+# 调高可能导致跟踪器更容易丢失目标，但减少错误跟踪。
+# new_track_thresh：
+# 作用：设置跟踪器开始新跟踪所需的置信度阈值。
+# 调整：调低可能导致跟踪器对新目标更敏感，但可能增加误跟踪。
+# 调高可能导致跟踪器对新目标更保守，减少误跟踪，但可能错过一些新目标。
+# track_buffer：
+# 作用：定义跟踪器在目标消失后保留跟踪信息的最大帧数。
+# 调整：调低可能导致跟踪器更快放弃消失的目标，减少资源消耗。
+# 调高可能导致跟踪器在目标消失后保持跟踪更长时间，可能导致跟踪错误目标。
+# match_thresh：
+# 作用：设置两个检测匹配的最大距离阈值。
+# 调整：调低可能导致跟踪器更容易匹配检测，但可能增加错误匹配。
+# 调高可能导致跟踪器更保守地匹配检测，减少错误匹配，但可能错过正确匹配。
+# proximity_thresh：
+# 作用：设置基于距离的匹配的最大距离阈值。
+# 调整：调低可能导致跟踪器更容易匹配近距离的检测。
+# 调高可能导致跟踪器对近距离检测更严格，减少错误匹配。
+# appearance_thresh：
+# 作用：设置外观匹配的最大差异阈值。
+# 调整：调低可能导致跟踪器更容易基于外观匹配检测。
+# 调高可能导致跟踪器对外观差异更敏感，减少错误匹配。
+# cmc_method：
+# 作用：指定用于外观匹配的方法。
+# 调整：不同的方法可能对不同场景表现不同。例如，ecc可能在某些情况下比sof更有效。
