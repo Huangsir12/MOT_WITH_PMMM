@@ -2,6 +2,9 @@ import os
 import argparse
 import torch
 import torch.nn as nn
+
+import sys
+sys.path.append("/root/autodl-tmp/boxmot/bpbreid")
 import torchreid
 from torchreid.tools.inference import Inference
 from torchreid.data.masks_transforms import compute_parts_num_and_names
