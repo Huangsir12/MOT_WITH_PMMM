@@ -19,7 +19,7 @@ import torch
 from functools import partial
 import threading
 import sys
-sys.path.append("/root/autodl-tmp/boxmot")
+sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM")
 from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import ROOT, WEIGHTS, TRACKER_CONFIGS, logger as LOGGER, EXAMPLES, DATA

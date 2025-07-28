@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 
 import sys
-sys.path.append("/root/autodl-tmp/boxmot/bpbreid")
+sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM/bpbreid")
 import torchreid
 from torchreid.tools.inference import Inference
 from torchreid.data.masks_transforms import compute_parts_num_and_names
