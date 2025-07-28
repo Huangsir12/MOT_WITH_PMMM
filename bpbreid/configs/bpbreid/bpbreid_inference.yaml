@@ -5,7 +5,7 @@ data:
   targets: [market1501]
   transforms: [rc, re]
   width: 128
-inference: {dataset_folder: /root/autodl-tmp/MOT_WITH_PMMM/runs/mot/Emporium/yolov10x_osnet_x1_0_msmt17_botsort/0728-1510_pmmm/door1,
+inference: {dataset_folder: /root/autodl-tmp/MOT_WITH_PMMM/runs/mot/Emporium/yolov10x_osnet_x1_0_msmt17_botsort/0728-1908_pmmm/door1,
   dataset_name: AnChang10, enabled: true, gallery_features_path: '', load_gallery_features: false,
   num_classes: 21, output_folder: '', save_features: false}
 model:

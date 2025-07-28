@@ -4,7 +4,7 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchreid.utils.tensortools import masked_mean
+from ..utils.tensortools import masked_mean
 
 
 class PartAveragedTripletLoss(nn.Module):

@@ -7,7 +7,7 @@ import torch
 
 __all__ = ['compute_model_complexity']
 
-from torchreid.models.bpbreid import BPBreID
+from ..models.bpbreid import BPBreID
 
 """
 Utility

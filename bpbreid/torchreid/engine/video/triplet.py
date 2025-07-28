@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
-from torchreid.engine.image import ImageTripletEngine
-from torchreid.engine.video import VideoSoftmaxEngine
+from ..image import ImageTripletEngine
+from . import VideoSoftmaxEngine
 
 
 class VideoTripletEngine(ImageTripletEngine, VideoSoftmaxEngine):

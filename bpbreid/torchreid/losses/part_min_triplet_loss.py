@@ -2,8 +2,8 @@ from __future__ import division, absolute_import
 
 import torch
 
-from torchreid.losses.part_averaged_triplet_loss import PartAveragedTripletLoss
-from torchreid.utils.tensortools import replace_values
+from .part_averaged_triplet_loss import PartAveragedTripletLoss
+from ..utils.tensortools import replace_values
 
 
 class PartMinTripletLoss(PartAveragedTripletLoss):

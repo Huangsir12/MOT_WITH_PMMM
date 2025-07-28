@@ -3,7 +3,7 @@ import os
 import sys
 import os.path as osp
 
-from torchreid.utils.tools import mkdir_if_missing
+from ..tools import mkdir_if_missing
 
 __all__ = ['StdoutLogger', 'RankLogger']
 

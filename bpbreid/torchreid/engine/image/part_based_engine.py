@@ -15,7 +15,7 @@ from ...losses.body_part_attention_loss import BodyPartAttentionLoss
 from ...metrics.distance import compute_distance_matrix_using_bp_features
 from ...utils import plot_body_parts_pairs_distance_distribution, \
     plot_pairs_distance_distribution, re_ranking
-from torchreid.utils.constants import *
+from ...utils.constants import *
 from ...utils.torchtools import collate
 from ...utils.visualization.feature_map_visualization import display_feature_maps
 

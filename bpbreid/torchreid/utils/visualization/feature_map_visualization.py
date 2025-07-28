@@ -19,8 +19,8 @@ import torch
 # from reid.models.CompactBilinearPooling_dsybaik import CompactBilinearPooling
 
 # Source: https://github.com/yuminsuh/part_bilinear_reid/blob/master/vis_featmap.ipynb
-from torchreid.utils import Writer, Logger
-from torchreid.utils.constants import PARTS
+from .. import Writer, Logger
+from ..constants import PARTS
 
 
 def flatten(maps):

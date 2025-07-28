@@ -6,14 +6,14 @@ from collections import OrderedDict
 import numpy as np
 import torch
 from torch.nn import functional as F
-from torchreid import metrics
-from torchreid.data.datasets import get_dataset_nickname
-from torchreid.losses import deep_supervision
-from torchreid.utils import (
+from .. import metrics
+from ..data.datasets import get_dataset_nickname
+from ..losses import deep_supervision
+from ..utils import (
     re_ranking, open_all_layers, save_checkpoint,
     open_specified_layers, visualize_ranked_results, Logger, AverageMeter, perc, plot_pairs_distance_distribution
 )
-from torchreid.utils.torchtools import collate
+from ..utils.torchtools import collate
 
 
 class Engine(object):

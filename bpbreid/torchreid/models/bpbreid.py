@@ -4,8 +4,8 @@ import torch
 import torch.nn.functional as F
 import numpy as np
 from torch import nn
-from torchreid import models
-from torchreid.utils.constants import *
+from .. import models
+from ..utils.constants import *
 
 __all__ = [
     'bpbreid'

@@ -6,9 +6,9 @@ import os.path as osp
 import numpy as np
 from tabulate import tabulate
 from torch.nn import functional as F
-from torchreid.tools.feature_extractor import FeatureExtractor
-from torchreid.tools.automized_data import AutomizedDataLoader
-from torchreid.utils.constants import *
+from .feature_extractor import FeatureExtractor
+from .automized_data import AutomizedDataLoader
+from ..utils.constants import *
 from .. import metrics
 from ..metrics.distance import compute_distance_matrix_using_bp_features
 from ..utils import plot_body_parts_pairs_distance_distribution, \

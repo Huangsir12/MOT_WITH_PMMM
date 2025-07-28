@@ -2,7 +2,7 @@ import random
 import uuid
 from datetime import datetime
 from yacs.config import CfgNode as CN
-from torchreid.utils.constants import *
+from ..utils.constants import *
 from deepdiff import DeepDiff
 import re
 import pprint

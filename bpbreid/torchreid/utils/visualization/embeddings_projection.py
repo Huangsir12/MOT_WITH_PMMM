@@ -2,8 +2,8 @@ import cv2
 import torch
 import numpy as np
 
-from torchreid.utils import Logger
-from torchreid.utils.engine_state import EngineState
+from .. import Logger
+from ..engine_state import EngineState
 
 
 def visualize_embeddings(qf, gf, q_pids, g_pids, test_loader, dataset_name, qf_parts_visibility, gf_parts_visibility, mAP, rank1):

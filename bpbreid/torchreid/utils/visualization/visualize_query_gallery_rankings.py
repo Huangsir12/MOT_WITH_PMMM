@@ -5,8 +5,8 @@ import cv2
 import matplotlib
 import numpy as np
 
-from torchreid.utils import Logger, perc
-from torchreid.utils.engine_state import EngineState
+from .. import Logger, perc
+from ..engine_state import EngineState
 
 GRID_SPACING_V = 100
 GRID_SPACING_H = 100

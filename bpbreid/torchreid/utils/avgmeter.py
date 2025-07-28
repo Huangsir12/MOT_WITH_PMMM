@@ -9,7 +9,7 @@ import numpy as np
 
 __all__ = ['AverageMeter', 'MetricMeter', 'TimeMeter', 'TorchTimeMeter', 'EpochMetricsMeter']
 
-from torchreid.utils.engine_state import EngineStateListener
+from .engine_state import EngineStateListener
 
 
 class AverageMeter(object):

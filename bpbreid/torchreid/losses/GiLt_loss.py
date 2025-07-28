@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 from collections import OrderedDict
 from torchmetrics import Accuracy
-from torchreid.losses import init_part_based_triplet_loss, CrossEntropyLoss
-from torchreid.utils.constants import GLOBAL, FOREGROUND, CONCAT_PARTS, PARTS
+from . import init_part_based_triplet_loss, CrossEntropyLoss
+from ..utils.constants import GLOBAL, FOREGROUND, CONCAT_PARTS, PARTS
 
 
 class GiLtLoss(nn.Module):

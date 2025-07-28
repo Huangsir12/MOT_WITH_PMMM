@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import PercentFormatter
 
-from torchreid.utils import AverageMeter, Logger
-from torchreid.utils.engine_state import EngineState
+from . import AverageMeter, Logger
+from .engine_state import EngineState
 
 
 def plot_body_parts_pairs_distance_distribution(body_part_pairwise_dist, q_pids, g_pids, tag):

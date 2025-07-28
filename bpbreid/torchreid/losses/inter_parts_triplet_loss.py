@@ -1,5 +1,5 @@
 from __future__ import division, absolute_import
-from torchreid.losses.part_averaged_triplet_loss import PartAveragedTripletLoss
+from .part_averaged_triplet_loss import PartAveragedTripletLoss
 import torch
 
 

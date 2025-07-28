@@ -12,7 +12,7 @@ import warnings
 import PIL
 import torch
 from PIL import Image
-from torchreid.utils.constants import bn_correspondants
+from .constants import bn_correspondants
 
 __all__ = [
     'mkdir_if_missing', 'check_isfile', 'read_json', 'write_json',

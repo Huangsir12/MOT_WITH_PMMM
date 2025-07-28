@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 
-from torchreid import metrics
-from torchreid.losses import TripletLoss, CrossEntropyLoss
+from ... import metrics
+from ...losses import TripletLoss, CrossEntropyLoss
 
 from ..engine import Engine
 

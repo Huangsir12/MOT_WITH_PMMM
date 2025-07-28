@@ -2,8 +2,8 @@ from __future__ import division, print_function, absolute_import
 import torch
 from torch.nn import functional as F
 
-from torchreid.utils.writer import Writer
-from torchreid.utils.tensortools import replace_values, masked_mean
+from ..utils.writer import Writer
+from ..utils.tensortools import replace_values, masked_mean
 
 
 def compute_distance_matrix(input1, input2, metric='euclidean'):

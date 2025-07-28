@@ -56,7 +56,7 @@ boxmot/motion/cmc/*.jpg
 *_output.json
 
 # datasets
-data/
+data/*datasets/
 bpbreid/AnChang10/
 bpbreid/AnChang110/
 bpbreid/logs/

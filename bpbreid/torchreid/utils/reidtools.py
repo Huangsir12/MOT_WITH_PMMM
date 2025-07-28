@@ -3,7 +3,7 @@ import numpy as np
 import shutil
 import os.path as osp
 import cv2
-from torchreid.utils import Logger
+from . import Logger
 from .engine_state import EngineState
 from .tools import mkdir_if_missing
 

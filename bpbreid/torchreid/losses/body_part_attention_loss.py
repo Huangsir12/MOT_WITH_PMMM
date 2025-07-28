@@ -5,7 +5,7 @@ from collections import OrderedDict
 from monai.losses import FocalLoss, DiceLoss
 from torch.nn import CrossEntropyLoss
 from torchmetrics import Accuracy
-from torchreid.utils.constants import PIXELS
+from ..utils.constants import PIXELS
 
 
 class BodyPartAttentionLoss(nn.Module):

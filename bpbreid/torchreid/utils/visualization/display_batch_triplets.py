@@ -9,8 +9,8 @@ __all__ = ['show_triplet']
 #     CMAP_JET.set_bad('white', alpha=0.5)
 # except ImportError:
 #     CMAP_JET = None
-from torchreid.utils import Logger
-from torchreid.utils.engine_state import EngineState
+from .. import Logger
+from ..engine_state import EngineState
 
 red = [1, 0, 0]
 green = [0, 1, 0]

@@ -1,7 +1,7 @@
 from __future__ import division, print_function, absolute_import
 import torch
 
-from torchreid.engine.image import ImageSoftmaxEngine
+from ..image import ImageSoftmaxEngine
 
 
 class VideoSoftmaxEngine(ImageSoftmaxEngine):
