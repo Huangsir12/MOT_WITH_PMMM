@@ -63,7 +63,7 @@ platformdirs==4.3.7
 protobuf==5.29.4
 psutil==7.0.0
 py-cpuinfo==9.0.0
-pycocotools==2.0.8
+pycocotools==2.0.10
 pycodestyle==2.13.0
 pydantic==2.11.2
 pydantic_core==2.33.1
