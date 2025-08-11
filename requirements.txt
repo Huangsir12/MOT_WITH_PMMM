@@ -95,7 +95,7 @@ tifffile==2025.3.30
 tomli==2.2.1
 torch==2.4.0+cu124
 torchaudio==2.4.0+cu124
-torchmetrics==0.10.3
+torchmetrics==1.8.1
 torchvision==0.19.0+cu124
 tqdm==4.67.1
 triton==3.0.0
