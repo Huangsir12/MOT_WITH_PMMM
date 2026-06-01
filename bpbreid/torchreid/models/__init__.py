@@ -4,6 +4,7 @@ from .pcb import *
 from .mlfn import *
 from .hacnn import *
 from .osnet import *
+from .tosnet import *
 from .pvpm import pose_resnet50_256_p4, pose_resnet50_256_p6, pose_resnet50_256_p6_pscore_reg, \
     pose_resnet50_256_p4_pscore_reg
 from .resnet_fastreid import build_resnet_backbone, fastreid_resnet, fastreid_resnet_ibn, fastreid_resnet_nl, \
@@ -76,6 +77,10 @@ __model_factory = {
     'osnet_x0_25': osnet_x0_25,
     'osnet_ibn_x1_0': osnet_ibn_x1_0,
     'osnet_ain_x1_0': osnet_ain_x1_0,
+    'tosnet_x1_0': tosnet_x1_0,
+    'tosnet_x0_75': tosnet_x0_75,
+    'tosnet_x0_5': tosnet_x0_5,
+    'tosnet_x0_25': tosnet_x0_25,
     'pose_p4': pose_resnet50_256_p4,
     'pose_p6': pose_resnet50_256_p6,
     'pose_p6s': pose_resnet50_256_p6_pscore_reg,

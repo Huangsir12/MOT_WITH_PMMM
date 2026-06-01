@@ -23,9 +23,9 @@ sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM")
 from boxmot import TRACKERS
 from boxmot.tracker_zoo import create_tracker
 from boxmot.utils import ROOT, WEIGHTS, TRACKER_CONFIGS, logger as LOGGER, EXAMPLES, DATA
+from boxmot.utils.misc import increment_path
 from boxmot.utils.checks import RequirementsChecker
 from boxmot.utils.torch_utils import select_device
-from boxmot.utils.misc import increment_path
 
 from ultralytics import YOLO
 from ultralytics.data.loaders import LoadImagesAndVideos
@@ -428,7 +428,8 @@ def generate_mot_results_with_pmmm(args: argparse.Namespace, txt_name: str, conf
             # all_mot_results.append(mot_results)
             frames.append(frame)
             boxes = tracks[:, 0:4]
-            track_ids = tracks[:, 4].astype(np.int32)
+            # track_ids = tracks[:, 4].astype(np.int32)
+            track_ids = tracks[:, 4].astype(np.int32).tolist()
             track_results_boxes.append(boxes)
             track_results_ids.append(track_ids)
             track_results_conf.append(tracks[:, 5])
@@ -514,7 +515,7 @@ def trackeval(args: argparse.Namespace, seq_paths: list, save_dir: Path, MOT_res
     # d = ["MOT17-04"]
 
     args = [
-        sys.executable, EXAMPLES / 'val_utils' / 'scripts' / 'run_mot_challenge.py',
+        sys.executable, EXAMPLES / 'TrackEval' / 'scripts' / 'run_mot_challenge.py',
         "--GT_FOLDER", str(gt_folder),
         "--BENCHMARK", "",
         "--TRACKERS_FOLDER", args.exp_folder_path,
@@ -641,8 +642,8 @@ def parse_opt() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     # Global arguments
-    parser.add_argument('--yolo-model', nargs='+', type=Path, default=[WEIGHTS / 'yolov10x.pt'], help='yolo model path')
-    # parser.add_argument('--yolo-model', nargs='+', type=Path, default=[WEIGHTS / 'yolov10x_trained_best.pt'], help='yolo model path')
+    # parser.add_argument('--yolo-model', nargs='+', type=Path, default=[WEIGHTS / 'yolov10x.pt'], help='yolo model path')
+    parser.add_argument('--yolo-model', nargs='+', type=Path, default=[WEIGHTS / 'yolov10x_trained_best1.pt'], help='yolo model path')
     parser.add_argument('--reid-model', nargs='+', type=Path, default=[WEIGHTS / 'osnet_x1_0_msmt17.pt'], help='reid model path')
     # parser.add_argument('--source', type=str, default=DATA / "datasets" / "MOT17" / "train", help='file/dir/URL/glob, 0 for webcam')
     # parser.add_argument('--source', type=str, default=DATA / "datasets" / "val" / "MOT17-val" / "val", help='file/dir/URL/glob, 0 for webcam')
@@ -652,7 +653,7 @@ def parse_opt() -> argparse.Namespace:
     parser.add_argument('--conf', type=float, default=0.01, help='min confidence threshold')
     parser.add_argument('--iou', type=float, default=0.7, help='intersection over union (IoU) threshold for NMS')
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
-    parser.add_argument('--classes', nargs='+', type=int, default=0, help='filter by class: --classes 0, or --classes 0 2 3')
+    parser.add_argument('--classes', nargs='+', type=int, default=1, help='filter by class: --classes 0, or --classes 0 2 3')
     parser.add_argument('--project', default=ROOT / 'runs', type=Path, help='save results to project/name')
     parser.add_argument('--name', default='', help='save results to project/name')
     parser.add_argument('--exist-ok', action='store_true', default=True, help='existing project/name ok, do not increment')
@@ -667,18 +668,19 @@ def parse_opt() -> argparse.Namespace:
     parser.add_argument('--agnostic-nms', default=False, action='store_true', help='class-agnostic NMS')
     parser.add_argument('--n-trials', type=int, default=4, help='nr of trials for evolution')
     parser.add_argument('--objectives', type=str, nargs='+', default=["HOTA", "MOTA", "IDF1"], help='set of objective metrics: HOTA,MOTA,IDF1')
-    parser.add_argument('--val-tools-path', type=Path, default=EXAMPLES / 'val_utils', help='path to store trackeval repo in')
+    parser.add_argument('--val-tools-path', type=Path, default=EXAMPLES / 'TrackEval', help='path to store trackeval repo in')
     parser.add_argument('--split-dataset', action='store_true', help='Use the second half of the dataset')
 
     parser.add_argument('--use_pmmm', type=bool, default=True, help='use PMMM or not')
     parser.add_argument('--reid_config_file', type=str, default='bpbreid/configs/bpbreid/bpbreid_inference.yaml', help='path to config file')
-    parser.add_argument('--picture2video', type=bool, default=False, help='use PMMM or not')
+    parser.add_argument('--picture2video', type=bool, default=True, help='use PMMM or not')
 
     subparsers = parser.add_subparsers(dest='command')
 
     # Subparser for generate_dets_embs
     generate_dets_embs_parser = subparsers.add_parser('generate_dets_embs', help='Generate detections and embeddings')
-    generate_dets_embs_parser.add_argument('--source', type=str, required=True, default=DATA / "datasets" / "MOT17" / "train", help='file/dir/URL/glob, 0 for webcam')
+    # generate_dets_embs_parser.add_argument('--source', type=str, required=True, default=DATA / "datasets" / "MOT17" / "train", help='file/dir/URL/glob, 0 for webcam')
+    generate_dets_embs_parser.add_argument('--source', type=str, default='/root/autodl-tmp/MOT_WITH_PMMM/data/video_datasets/door1.mp4', help='file/dir/URL/glob, 0 for webcam')
     generate_dets_embs_parser.add_argument('--yolo-model', nargs='+', type=Path, default=WEIGHTS / 'yolox_x_ablation.pt', help='yolo model path')
     generate_dets_embs_parser.add_argument('--reid-model', nargs='+', type=Path, default=WEIGHTS / 'osnet_x1_0_dukemtmcreid.pt', help='reid model path')
     generate_dets_embs_parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
@@ -699,7 +701,7 @@ def parse_opt() -> argparse.Namespace:
 
     # Subparser for trackeval
     trackeval_parser = subparsers.add_parser('trackeval', help='Evaluate tracking results')
-    trackeval_parser.add_argument('--exp-folder-path', type=Path, default="runs/mot/yolov10x_osnet_x1_0_msmt17_botsort", required=True, help='path to experiment folder')
+    trackeval_parser.add_argument('--exp-folder-path', type=Path, default="runs/mot/Emporium/yolov10x_osnet_x1_0_msmt17_botsort/1219-1011", required=True, help='path to experiment folder')
 
     opt = parser.parse_args()
     source_path = Path(opt.source)

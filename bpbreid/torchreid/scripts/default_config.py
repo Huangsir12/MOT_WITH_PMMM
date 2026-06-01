@@ -56,7 +56,7 @@ def get_default_config():
     cfg.model.bpbreid.training_binary_visibility_score = True  # use binary visibility score (0 or 1) instead of continuous visibility score (0 to 1) at training
     cfg.model.bpbreid.testing_binary_visibility_score = True  # use binary visibility score (0 or 1) instead of continuous visibility score (0 to 1) at testing
     cfg.model.bpbreid.shared_parts_id_classifier = False  # if each part branch uses share weights for the identity classifier. Used only when the identity loss is used on part-based embeddings.
-    cfg.model.bpbreid.hrnet_pretrained_path = "weights/bpbreid_pretrained_model" # path to pretrained weights for HRNet backbone, download on our Google Drive or on https://github.com/HRNet/HRNet-Image-Classification
+    cfg.model.bpbreid.hrnet_pretrained_path = "/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/weights/bpbreid_pretrained_model" # path to pretrained weights for HRNet backbone, download on our Google Drive or on https://github.com/HRNet/HRNet-Image-Classification
     # number of horizontal stripes desired. When BPBreID is used, this variable will be automatically filled depending
     # on "data.masks.preprocess"
     cfg.model.bpbreid.masks = CN()
@@ -190,7 +190,7 @@ def get_default_config():
     # in batches of 'batch_size_pairwise_dist_matrix' gallery samples.
     cfg.test.dist_metric = 'euclidean' # distance metric, ['euclidean', 'cosine']
     cfg.test.normalize_feature = True # normalize feature vectors before computing distance
-    cfg.test.ranks = [1, 5, 10] # cmc ranks
+    cfg.test.ranks = [1, 5, 10, 20] # cmc ranks
     cfg.test.evaluate = True # test only
     cfg.test.load_features = False # load precomputed features from disk to save time
     cfg.test.gallery_features_path = '' # directory to load features
@@ -408,7 +408,7 @@ def display_config_diff(cfg, default_cfg_copy):
                 key = re.findall(r"\['([A-Za-z0-9_]+)'\]", k)[-1]
                 cfg_diff[key] = v['new_value']
     print("Diff from default config :")
-    pprint.pprint(cfg_diff)
+    # pprint.pprint(cfg_diff)
     if len(str(cfg_diff)) < 128:
         cfg.project.diff_config = str(cfg_diff)
     else:

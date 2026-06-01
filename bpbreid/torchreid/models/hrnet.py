@@ -603,7 +603,8 @@ class HighResolutionNet(nn.Module):
 
 
 def init_pretrained_weights(model, pretrain_path, model_key):
-    path = os.path.join(pretrain_path, model_paths[model_key])
+    # path = os.path.join(pretrain_path, model_paths[model_key])
+    path = "/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/weights/bpbreid_pretrained_model/hrnetv2_w32_imagenet_pretrained.pth"
     print('Loading pretrained ImageNet HRNet32 model at {}'.format(path))
     model.load_param(path)
 

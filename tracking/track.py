@@ -2,13 +2,11 @@
 
 import argparse
 import cv2
-import numpy as np
 from functools import partial
 from pathlib import Path
 
 import torch
-import os
-from datetime import datetime
+from tqdm import tqdm
 
 import sys
 sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM")
@@ -23,9 +21,6 @@ checker = RequirementsChecker()
 checker.check_packages(('ultralytics @ git+https://github.com/mikel-brostrom/ultralytics.git', ))  # install
 
 from ultralytics import YOLO
-from ultralytics.utils.plotting import Annotator, colors
-from ultralytics.data.utils import VID_FORMATS
-from ultralytics.utils.plotting import save_one_box
 
 
 def on_predict_start(predictor, persist=False):
@@ -58,6 +53,7 @@ def on_predict_start(predictor, persist=False):
         print(f"tracker method:{predictor.custom_args.tracking_method} tracker id:{i}")
 
     predictor.trackers = trackers
+
 
 
 @torch.no_grad()
@@ -116,8 +112,9 @@ def run(args):
     yolo.predictor.custom_args = args
     for r in results:
         img = yolo.predictor.trackers[0].plot_results(r.orig_img, args.show_trajectories)
+        # print(r.boxes)
         if args.show is True:
-            cv2.imshow('BoxMOT', img)     
+            cv2.imshow('BoxMOT', img)
             key = cv2.waitKey(1) & 0xFF
             if key == ord(' ') or key == ord('q'):
                 break
@@ -126,13 +123,13 @@ def run(args):
 def parse_opt():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--yolo-model', type=Path, default=WEIGHTS / 'yolov10x.pt',
+    parser.add_argument('--yolo-model', type=Path, default=WEIGHTS / 'yolov10x_trained_best1.pt',
                         help='yolo model path')
     parser.add_argument('--reid-model', type=Path, default=WEIGHTS / 'osnet_x1_0_msmt17.pt',
                         help='reid model path')
     parser.add_argument('--tracking-method', type=str, default='botsort',
                         help='deepocsort, botsort, strongsort, ocsort, bytetrack, imprassoc, boosttrack')
-    parser.add_argument('--source', type=str, default='/root/autodl-tmp/boxmot/video_datasets/door1.mp4',
+    parser.add_argument('--source', type=str, default='/root/autodl-tmp/MOT_WITH_PMMM/data/video_datasets/camera_001_0.mp4',
                         help='file/dir/URL/glob, 0 for webcam')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=None,
                         help='inference size h,w')
@@ -149,7 +146,7 @@ def parse_opt():
     parser.add_argument('--save', action='store_true',
                         help='save video tracking results')
     # class 0 is person, 1 is bycicle, 2 is car... 79 is oven
-    parser.add_argument('--classes', nargs='+', type=int, default=[0],
+    parser.add_argument('--classes', nargs='+', type=int, default=[1],
                         help='filter by class: --classes 0, or --classes 0 2 3')
     parser.add_argument('--project', default=ROOT / 'runs' / 'track',
                         help='save results to project/name')

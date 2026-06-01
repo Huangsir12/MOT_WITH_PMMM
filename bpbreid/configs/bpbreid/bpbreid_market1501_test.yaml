@@ -1,5 +1,5 @@
 data:
-  root: '/root/autodl-tmp/bpbreid/Market-1501-v15.09.15'
+  root: '/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/datasets'
   sources: ['market1501']
   targets: ['market1501']
   height: 384
@@ -8,7 +8,7 @@ data:
 
 model:
   name: 'bpbreid'
-  load_weights: '/root/autodl-tmp/bpbreid/torchreid/logs/560656311/2025_02_20_11_57/job-560656311_60_model.pth.tar'
+  load_weights: '/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/logs/780575955/2026_01_26_12_00_45_00Se998d7bb-f4a5-4a6f-979f-d932a89ac470model/job-780575955_60_model.pth.tar'
   load_config: True
   bpbreid:
     mask_filtering_training: False
@@ -22,7 +22,7 @@ model:
 
 test:
   evaluate: True
-  load_features: True
+  load_features: false
   gallery_features_path: '/root/autodl-tmp/bpbreid/torchreid/logs/462980077/features/gallery_features_market1501.pt'
   batch_size: 64
   visrank: True

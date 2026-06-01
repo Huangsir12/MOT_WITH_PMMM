@@ -1,0 +1,98 @@
+{
+  "timestamp": "2026-03-26 15:28:37",
+  "total_tasks": 12,
+  "successful_tasks": 5,
+  "failed_tasks": 7,
+  "results": [
+    {
+      "timestamp": "2026-03-26 15:02:07",
+      "dataset": "market1501",
+      "backbone": "hrnet32",
+      "loss": "part_based",
+      "model_name": "bpbreid",
+      "log_dir": "logs/531469154",
+      "best_weight_path": "logs/531469154/model/model.pth.tar-best",
+      "metrics": {
+        "mAP": null,
+        "cmc": {},
+        "rank-1": null,
+        "rank-5": null,
+        "rank-10": null,
+        "rank-20": null,
+        "ssmd": null
+      }
+    },
+    {
+      "timestamp": "2026-03-26 15:14:43",
+      "dataset": "market1501",
+      "backbone": "osnet_x1_0",
+      "loss": "part_based",
+      "model_name": "bpbreid",
+      "log_dir": "logs/144272509",
+      "best_weight_path": "logs/144272509/model/model.pth.tar-best",
+      "metrics": {
+        "mAP": null,
+        "cmc": {},
+        "rank-1": null,
+        "rank-5": null,
+        "rank-10": null,
+        "rank-20": null,
+        "ssmd": null
+      }
+    },
+    {
+      "timestamp": "2026-03-26 15:27:23",
+      "dataset": "market1501",
+      "backbone": "tosnet_x1_0",
+      "loss": "part_based",
+      "model_name": "bpbreid",
+      "log_dir": "logs/398301524",
+      "best_weight_path": "logs/398301524/model/model.pth.tar-best",
+      "metrics": {
+        "mAP": null,
+        "cmc": {},
+        "rank-1": null,
+        "rank-5": null,
+        "rank-10": null,
+        "rank-20": null,
+        "ssmd": null
+      }
+    },
+    {
+      "timestamp": "2026-03-26 15:27:58",
+      "dataset": "dajixiang",
+      "backbone": "osnet_x1_0",
+      "loss": "triplet",
+      "model_name": "osnet_x1_0",
+      "log_dir": "logs/611178002",
+      "best_weight_path": "logs/611178002/model/model.pth.tar-best",
+      "metrics": {
+        "mAP": null,
+        "cmc": {},
+        "rank-1": null,
+        "rank-5": null,
+        "rank-10": null,
+        "rank-20": null,
+        "ssmd": null
+      }
+    },
+    {
+      "timestamp": "2026-03-26 15:28:37",
+      "dataset": "dajixiang",
+      "backbone": "tosnet_x1_0",
+      "loss": "part_based",
+      "model_name": "bpbreid",
+      "log_dir": "logs/939944652",
+      "best_weight_path": "logs/939944652/model/model.pth.tar-best",
+      "metrics": {
+        "mAP": null,
+        "cmc": {},
+        "rank-1": null,
+        "rank-5": null,
+        "rank-10": null,
+        "rank-20": null,
+        "ssmd": null
+      }
+    }
+  ]
+}

@@ -365,6 +365,26 @@ def convert_to_mot_format(results: Union[Results, np.ndarray], frame_idx: int) -
             return mot_results.numpy()
 
 
+def read_mot_results(txt_path: Union[str, Path]) -> np.ndarray:
+    """
+    Reads MOT challenge formatted results from a text file.
+
+    Parameters:
+    - txt_path (Union[str, Path]): The path to the MOT results text file.
+
+    Returns:
+    - np.ndarray: An array containing the MOT formatted results.
+                  Format: [frame_id, track_id, x, y, w, h, not_ignored, class_id, confidence]
+    """
+    txt_path = Path(txt_path)
+    if not txt_path.exists():
+        raise FileNotFoundError(f"MOT results file not found: {txt_path}")
+
+    # Read CSV file
+    mot_results = pd.read_csv(txt_path, sep=',', header=None).values
+    return mot_results
+
+
 def write_mot_results(txt_path: Path, mot_results: np.ndarray) -> None:
     """
     Writes the MOT challenge formatted results to a text file.

@@ -54,6 +54,7 @@ class ImageSoftmaxEngine(Engine):
 
     def __init__(
         self,
+        config,
         datamanager,
         model,
         optimizer,
@@ -65,7 +66,7 @@ class ImageSoftmaxEngine(Engine):
         label_smooth=True,
         save_model_flag=False
     ):
-        super(ImageSoftmaxEngine, self).__init__(datamanager, writer, engine_state, test_only, use_gpu, save_model_flag)
+        super(ImageSoftmaxEngine, self).__init__(config, datamanager, writer, engine_state, test_only=test_only, use_gpu=use_gpu, save_model_flag=save_model_flag)
 
         self.model = model
         self.optimizer = optimizer

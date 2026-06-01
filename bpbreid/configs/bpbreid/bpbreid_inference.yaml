@@ -1,13 +1,13 @@
 data:
-  height: 384
+  height: 256
   root: /root/autodl-tmp/bpbreid/Market-1501-v15.09.15
   sources: [market1501]
   targets: [market1501]
   transforms: [rc, re]
-  width: 128
-inference: {dataset_folder: /root/autodl-tmp/MOT_WITH_PMMM/runs/mot/Emporium/yolov10x_osnet_x1_0_msmt17_botsort/0728-1908_pmmm/door1,
-  dataset_name: AnChang10, enabled: true, gallery_features_path: '', load_gallery_features: false,
-  num_classes: 21, output_folder: '', save_features: false}
+  width: 256
+inference: {dataset_folder: data/datasets/bpbreid_dajixiang/crops_202603, dataset_name: dajixiang,
+  enabled: true, gallery_features_path: '', load_gallery_features: false, num_classes: 21,
+  output_folder: '', save_features: false}
 model:
   bpbreid:
     backbone: hrnet32
@@ -17,5 +17,5 @@ model:
     masks: {dir: pifpaf_maskrcnn_filtering, preprocess: five_v}
     test_embeddings: [bn_foreg, parts]
   load_config: true
-  load_weights: /root/autodl-tmp/bpbreid/torchreid/logs/560656311/2025_02_20_11_57/job-560656311_60_model.pth.tar
+  load_weights: /root/autodl-tmp/MOT_WITH_PMMM/bpbreid/logs/DaJixiang_camera001_train/2026_02_06_17_13_31_13Sc86e5d82-b9df-4d9c-93cf-2601c760355dmodel/job-562693701_60_model.pth.tar
   name: bpbreid

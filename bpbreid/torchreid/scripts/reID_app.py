@@ -3,40 +3,44 @@ import argparse
 import torch
 import torch.nn as nn
 
-# import sys
-# sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM/bpbreid")
+import sys
+sys.path.append("/root/autodl-tmp/MOT_WITH_PMMM/bpbreid")
 
-# import torchreid
-# from torchreid.tools.inference import Inference
-# from torchreid.data.masks_transforms import compute_parts_num_and_names
-# from torchreid.utils import (
-#     Logger, check_isfile, set_random_seed, collect_env_info,
-#     resume_from_checkpoint, load_pretrained_weights, compute_model_complexity, Writer, load_checkpoint
-# )
-
-# from torchreid.scripts.default_config import (
-#     imagedata_kwargs, optimizer_kwargs, videodata_kwargs, engine_run_kwargs, inference_run_kwargs,
-#     get_default_config, lr_scheduler_kwargs, display_config_diff
-# )
-# from torchreid.utils.engine_state import EngineState
-
-from ..tools.inference import Inference
-from ..data.masks_transforms import compute_parts_num_and_names
-from ..utils import (
+from torchreid.tools.inference import Inference
+from torchreid.data.masks_transforms import compute_parts_num_and_names
+from torchreid.utils import (
     Logger, check_isfile, set_random_seed, collect_env_info,
     resume_from_checkpoint, load_pretrained_weights, compute_model_complexity, Writer, load_checkpoint
 )
 
-from .default_config import (
+from torchreid.scripts.default_config import (
     imagedata_kwargs, optimizer_kwargs, videodata_kwargs, engine_run_kwargs, inference_run_kwargs,
     get_default_config, lr_scheduler_kwargs, display_config_diff
 )
-from ..utils.engine_state import EngineState
+from torchreid.utils.engine_state import EngineState
+from torchreid.data import ImageDataManager, VideoDataManager
+from torchreid.engine import ImageSoftmaxEngine, ImageTripletEngine, ImagePartBasedEngine, VideoSoftmaxEngine, VideoTripletEngine
+from torchreid.models import build_model as torchreid_build_model
+from torchreid.optim import build_optimizer, build_lr_scheduler
 
-from ..data import ImageDataManager, VideoDataManager
-from ..engine import ImageSoftmaxEngine, ImageTripletEngine, ImagePartBasedEngine, VideoSoftmaxEngine, VideoTripletEngine
-from ..models import build_model as torchreid_build_model
-from ..optim import build_optimizer, build_lr_scheduler
+
+# from ..tools.inference import Inference
+# from ..data.masks_transforms import compute_parts_num_and_names
+# from ..utils import (
+#     Logger, check_isfile, set_random_seed, collect_env_info,
+#     resume_from_checkpoint, load_pretrained_weights, compute_model_complexity, Writer, load_checkpoint
+# )
+
+# from .default_config import (
+#     imagedata_kwargs, optimizer_kwargs, videodata_kwargs, engine_run_kwargs, inference_run_kwargs,
+#     get_default_config, lr_scheduler_kwargs, display_config_diff
+# )
+# from ..utils.engine_state import EngineState
+
+# from ..data import ImageDataManager, VideoDataManager
+# from ..engine import ImageSoftmaxEngine, ImageTripletEngine, ImagePartBasedEngine, VideoSoftmaxEngine, VideoTripletEngine
+# from ..models import build_model as torchreid_build_model
+# from ..optim import build_optimizer, build_lr_scheduler
 
 
 def build_datamanager(cfg):
@@ -50,32 +54,34 @@ def build_engine(cfg, datamanager, model, optimizer, scheduler, writer, engine_s
     if cfg.data.type == 'image':
         if cfg.loss.name == 'softmax':
             engine = ImageSoftmaxEngine(
+                cfg,
                 datamanager,
                 model,
-                optimizer=optimizer,
+                optimizer,
+                writer,
+                engine_state,
                 scheduler=scheduler,
                 test_only=cfg.test.evaluate,
                 use_gpu=cfg.use_gpu,
                 label_smooth=cfg.loss.softmax.label_smooth,
-                save_model_flag=cfg.model.save_model_flag,
-                writer=writer,
-                engine_state=engine_state
+                save_model_flag=cfg.model.save_model_flag
             )
 
         elif cfg.loss.name == 'triplet':
             engine = ImageTripletEngine(
+                cfg,
                 datamanager,
                 model,
-                optimizer=optimizer,
+                optimizer,
+                writer,
+                engine_state,
                 margin=cfg.loss.triplet.margin,
                 weight_t=cfg.loss.triplet.weight_t,
                 weight_x=cfg.loss.triplet.weight_x,
                 scheduler=scheduler,
                 use_gpu=cfg.use_gpu,
                 label_smooth=cfg.loss.softmax.label_smooth,
-                save_model_flag=cfg.model.save_model_flag,
-                writer=writer,
-                engine_state=engine_state
+                save_model_flag=cfg.model.save_model_flag
             )
 
         elif cfg.loss.name == 'part_based':
@@ -154,7 +160,8 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser.add_argument(
-        '--config-file', type=str, default='/root/autodl-tmp/bpbreid/configs/bpbreid/bpbreid_inference.yaml', help='path to config file'
+        '--config-file', type=str, default='/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/configs/bpbreid/bpbreid_dajixiang_train.yaml',
+         help='path to config file'
     )
     parser.add_argument(
         '-s',
@@ -174,7 +181,7 @@ def main():
         '--transforms', type=str, nargs='+', help='data augmentation'
     )
     parser.add_argument(
-        '--root', type=str, default='/root/autodl-tmp/bpbreid', help='path to data root'
+        '--root', type=str, default='/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/datasets', help='path to data root'
     )
     parser.add_argument(
         '--save_dir', type=str, default='', help='path to output root dir'
@@ -202,19 +209,23 @@ def main():
 
     if cfg.inference.enabled:
         print("Starting inference on external data")
+        if cfg.use_gpu:
+            torch.backends.cudnn.benchmark = True
+
+        logger = Logger(cfg)
+        writer = Writer(cfg)
+        engine_state = EngineState(cfg.train.start_epoch, cfg.train.max_epoch)
+        writer.init_engine_state(engine_state, cfg.model.bpbreid.masks.parts_num)
+        print('Building model: {}'.format(cfg.model.name))
         model = torchreid_build_model(
             name=cfg.model.name,
-            num_classes=cfg.inference.num_classes,
+            num_classes=751,
             loss=cfg.loss.name,
             pretrained=True,
             use_gpu=cfg.use_gpu,
             config=cfg
         )
-        logger = Logger(cfg)
-        writer = Writer(cfg)
         logger.add_model(model)
-        engine_state = EngineState(cfg.train.start_epoch, cfg.train.max_epoch)
-        writer.init_engine_state(engine_state, cfg.model.bpbreid.masks.parts_num)
         inference = Inference(cfg, model, writer)
         cmc, mAP, ssmd= inference.run(**inference_run_kwargs(cfg))
         print("CMC: {}\n mAP: {}\n SSMD: {}\n".format(cmc, mAP, ssmd))
@@ -271,12 +282,13 @@ def build_torchreid_model_engine(cfg):
     logger = Logger(cfg)
     writer = Writer(cfg)
     set_random_seed(cfg.train.seed)
-    print('Show configuration\n{}\n'.format(cfg))
-    print('Collecting env info ...')
-    print('** System info **\n{}\n'.format(collect_env_info()))
+    # print('Show configuration\n{}\n'.format(cfg))
+    # print('Collecting env info ...')
+    # print('** System info **\n{}\n'.format(collect_env_info()))
     if cfg.use_gpu:
         torch.backends.cudnn.benchmark = True
     datamanager = build_datamanager(cfg)
+    print(datamanager.num_train_pids)
     engine_state = EngineState(cfg.train.start_epoch, cfg.train.max_epoch)
     writer.init_engine_state(engine_state, cfg.model.bpbreid.masks.parts_num)
     print('Building model: {}'.format(cfg.model.name))
@@ -289,10 +301,10 @@ def build_torchreid_model_engine(cfg):
         config=cfg
     )
     logger.add_model(model)
-    num_params, flops = compute_model_complexity(
-        model, cfg
-    )
-    print('Model complexity: params={:,} flops={:,}'.format(num_params, flops))
+    # num_params, flops = compute_model_complexity(
+    #     model, cfg
+    # )
+    # print('Model complexity: params={:,} flops={:,}'.format(num_params, flops))
     if cfg.model.load_weights and check_isfile(cfg.model.load_weights):
         load_pretrained_weights(model, cfg.model.load_weights)
     if cfg.use_gpu:
@@ -317,7 +329,7 @@ def inference_reid_init(config_file):
 
     model = torchreid_build_model(
             name=cfg.model.name,
-            num_classes=cfg.inference.num_classes,
+            num_classes=751,
             loss=cfg.loss.name,
             pretrained=True,
             use_gpu=cfg.use_gpu,

@@ -58,7 +58,7 @@ boxmot/motion/cmc/*.jpg
 # datasets
 data/*datasets/
 bpbreid/AnChang10/
-bpbreid/AnChang110/
+bpbreid/*datasets/
 bpbreid/logs/
 bpbreid/video_datasets/
 

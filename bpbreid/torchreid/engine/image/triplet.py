@@ -60,6 +60,7 @@ class ImageTripletEngine(Engine):
 
     def __init__(
         self,
+        config,
         datamanager,
         model,
         optimizer,
@@ -73,7 +74,7 @@ class ImageTripletEngine(Engine):
         label_smooth=True,
         save_model_flag=False
     ):
-        super(ImageTripletEngine, self).__init__(datamanager, writer, engine_state, use_gpu, save_model_flag)
+        super(ImageTripletEngine, self).__init__(config, datamanager, writer, engine_state, test_only=False, use_gpu=use_gpu, save_model_flag=save_model_flag)
 
         self.model = model
         self.optimizer = optimizer

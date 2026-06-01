@@ -216,7 +216,7 @@ class Engine(object):
 
             if self.writer.intermediate_evaluate():
                 print('=> Intermediate test')
-                rank_1, mAP, ssmd = self.test(
+                rank_1, mAP, ssmd, _ = self.test(
                     epoch,
                     dist_metric=dist_metric,
                     normalize_feature=normalize_feature,
@@ -233,9 +233,10 @@ class Engine(object):
 
         self.engine_state.training_completed()
 
+        rank_1, mAP, ssmd, cmc = 0, 0, 0, None
         if self.engine_state.max_epoch > 0:
             print('=> Final test')
-            rank_1, mAP, ssmd = self.test(
+            rank_1, mAP, ssmd, cmc = self.test(
                 self.engine_state.epoch,
                 dist_metric=dist_metric,
                 normalize_feature=normalize_feature,
@@ -257,7 +258,19 @@ class Engine(object):
         self.engine_state.run_completed()
         self.logger.close()
 
-        return mAP
+        # 返回完整的评估结果
+        if self.engine_state.max_epoch > 0 and cmc is not None:
+            return {
+                'rank_1': float(rank_1),
+                'rank_5': float(cmc[4]) if len(cmc) > 4 else None,
+                'rank_10': float(cmc[9]) if len(cmc) > 9 else None,
+                'rank_20': float(cmc[19]) if len(cmc) > 19 else None,
+                'mAP': float(mAP),
+                'ssmd': float(ssmd),
+                'cmc': cmc.tolist() if hasattr(cmc, 'tolist') else list(cmc)
+            }
+        else:
+            return {'mAP': float(mAP)}
 
     def train(self, fixbase_epoch=0, open_layers=None):
         self.set_model_mode('train')
@@ -394,7 +407,8 @@ class Engine(object):
                                               ssmd_per_dataset,
                                               pxl_acc_per_dataset)
         r1 = cmc_avg.avg[0] if mAP_avg.count != 0 else 0
-        return r1, mAP_avg.avg, ssmd_avg.avg
+        cmc = cmc_avg.avg if mAP_avg.count != 0 else None
+        return r1, mAP_avg.avg, ssmd_avg.avg, cmc
 
     @torch.no_grad()
     def _evaluate(

@@ -107,7 +107,7 @@ def get_label_paths(is_mask, img_paths, dataset_dir):
         if not is_mask:
             file_path = os.path.join(dataset_dir, "masks", "pifpaf", relative_path + ".confidence_fields.npy")
         else:
-            file_path = os.path.join(dataset_dir, "masks", "pifpaf_maskrcnn_filtering", relative_path + ".npy")
+            file_path = os.path.join(dataset_dir, "masks", "pifpaf_maskrcnn_filtering", relative_path.split('.')[0] + ".npy")
         relative_paths.append(relative_path)
         file_paths.append(file_path)
     return relative_paths, file_paths
@@ -294,7 +294,7 @@ class BatchMask:
         print(f"* MaskRCNN model ->  {cfg if isinstance(cfg, str) else self.cfg.MODEL.WEIGHTS}")
 
         # Set the batch size for processing images, defaulting to 32 if not provided
-        self.batch_size = batch_size if batch_size else 32
+        self.batch_size = batch_size if batch_size else 16
 
         # Set the number of worker processes for data loading, defaulting to the number of CPU cores
         self.workers = workers if workers is not None else 0
@@ -359,6 +359,8 @@ class BatchMask:
         """
         assert len(imagery) > 0, "No images found in imagery."
 
+        print(len(imagery))
+
         if not is_overwrite:
             # Skip existing images if overwrite is disabled
             imagery = skip_existing(True, imagery, dataset_dir)
@@ -385,17 +387,22 @@ class BatchMask:
                 relative_paths, pifpaf_file_paths = get_label_paths(is_mask=False, img_paths=paths,
                                                                     dataset_dir=dataset_dir)
 
+                print(f"len_pifpaf_file:{len(pifpaf_file_paths)}")
+
                 assert all(os.path.exists(path) for path in
                            pifpaf_file_paths), "Some PiPaf Label File ('.confidence_fields.npy') does not exist!"
 
                 # Filter the predictions using the mask files
                 pifpaf_filtered: List[np.ndarray] = self.__filter_pifpaf_with_mask(batch, pifpaf_file_paths)
+                print(f"len_pifpaf_mask:{len(pifpaf_filtered)}")
 
-                # Get the file paths for saving the mask files
-                _, mask_file_paths = get_label_paths(is_mask=True, img_paths=paths, dataset_dir=dataset_dir)
+                if len(pifpaf_filtered) > 0:
+                    # Get the file paths for saving the mask files
+                    _, mask_file_paths = get_label_paths(is_mask=True, img_paths=paths, dataset_dir=dataset_dir)
+                    # print(mask_file_paths)
 
-                # Save the filtered mask files
-                save_files(pifpaf_filtered, mask_file_paths, verbose)
+                    # Save the filtered mask files
+                    save_files(pifpaf_filtered, mask_file_paths, verbose)
 
                 progress_bar.update(1)
 
@@ -439,17 +446,33 @@ class BatchMask:
             pred_boxes, scores, pred_classes, pred_masks = results[0]["instances"].get_fields().values()
             if len(pred_masks) == 0:
                 raise Exception("Error: Pifpaf model did not return any masks!")
+            
+            print(f"len_pred_masks:{len(pred_masks)}")
 
-            # Filter out all masks that are not person
-            filtered_boxes, filtered_masks = zip(
-                *[(box.cpu().numpy(), mask.cpu().numpy()) for box, mask, cls in
-                  zip(pred_boxes, pred_masks, pred_classes) if cls == 0])
+            filtered_data = [(box.cpu().numpy(), mask.cpu().numpy()) 
+                 for box, mask, cls in zip(pred_boxes, pred_masks, pred_classes) 
+                 if cls == 0]
 
-            # Order the masks by bbox distance to the center of the image
-            distances = order_bbox(image_size, filtered_boxes)
-            filtered_masks = [filtered_masks[i] for i, _ in distances]
+            if filtered_data:
+                filtered_boxes, filtered_masks = zip(*filtered_data)
+                # Order the masks by bbox distance to the center of the image
+                distances = order_bbox(image_size, filtered_boxes)
+                filtered_masks = [filtered_masks[i] for i, _ in distances]
+                return filtered_masks
+            else:
+                return []
+                
 
-            return filtered_masks
+            # # Filter out all masks that are not person
+            # filtered_boxes, filtered_masks = zip(
+            #     *[(box.cpu().numpy(), mask.cpu().numpy()) for box, mask, cls in
+            #       zip(pred_boxes, pred_masks, pred_classes) if cls == 0])
+
+            # # Order the masks by bbox distance to the center of the image
+            # distances = order_bbox(image_size, filtered_boxes)
+            # filtered_masks = [filtered_masks[i] for i, _ in distances]
+
+            # return filtered_masks
 
         # Filter PifPaf array using segmentation mask
         def filter_pifpaf_with_mask(pifpaf_array, mask, is_resize_pifpaf=False, interpolation=cv2.INTER_CUBIC):
@@ -474,14 +497,19 @@ class BatchMask:
         # Get the masks from the PifPaf predictions
         masks = filter_masks(self.model(batch))
 
+        print(f"len_masks:{len(masks)}")
+
         # Load the PifPaf label arrays
-        pifpaf_labels = [np.load(pifpaf_file_path) for pifpaf_file_path in pifpaf_file_paths]
+        if len(masks) > 0:
+            pifpaf_labels = [np.load(pifpaf_file_path) for pifpaf_file_path in pifpaf_file_paths]
+            print(f"len_pifpaf_labels:{len(pifpaf_labels)}")
 
-        # Filter the PifPaf arrays using the masks
-        pifpaf_filtered = [filter_pifpaf_with_mask(pifpaf_label, mask) for pifpaf_label, mask in
-                           zip(pifpaf_labels, masks)]
+            # Filter the PifPaf arrays using the masks
+            pifpaf_filtered = [filter_pifpaf_with_mask(pifpaf_label, mask) for pifpaf_label, mask in
+                            zip(pifpaf_labels, masks)]
 
-        return pifpaf_filtered
+            return pifpaf_filtered
+        return []
 
 
 def main():

@@ -1,0 +1,12 @@
+train: ./det_dajixiang/train/images
+val: ./det_dajixiang/valid/images
+test: ./det_dajixiang/test/images
+
+nc: 1
+names: ['person']
+
+roboflow:
+  workspace: joseph-nelson
+  project: det
+  version: 4
+  license: Public Domain

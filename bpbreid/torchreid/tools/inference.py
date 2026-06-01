@@ -27,6 +27,7 @@ class Inference():
         self.extractor = FeatureExtractor(
             cfg, 
             model_path=cfg.model.load_weights,
+            image_size=(cfg.data.height, cfg.data.width),
             device='cuda' if torch.cuda.is_available() else 'cpu',
             num_classes=cfg.inference.num_classes,
             model=model
@@ -128,7 +129,8 @@ class Inference():
 
     def extract_det_idx(self, img_path):
         # return int(os.path.basename(img_path).split("_")[0])
-        return int(os.path.basename(img_path).split(".")[0].split("_")[-1])
+        # return int(os.path.basename(img_path).split("_")[0])
+        return int(os.path.basename(img_path).split("_")[-1].split(".")[0])
 
 
     def extract_reid_features(self, input_folder):
@@ -144,22 +146,6 @@ class Inference():
         pids = np.asarray(pids)
 
         camids = np.asarray([1] * len(image_list))
-
-        # # dump to disk
-        # video_name = os.path.splitext(os.path.basename(folder))[0]
-        # parts_embeddings_filename = os.path.join(out_path, "embeddings_" + video_name + ".npy")
-        # parts_visibility_scores_filanme = os.path.join(out_path, "visibility_scores_" + video_name + ".npy")
-        # parts_masks_filename = os.path.join(out_path, "masks_" + video_name + ".npy")
-
-        # os.makedirs(os.path.dirname(parts_embeddings_filename), exist_ok=True)
-        # os.makedirs(os.path.dirname(parts_visibility_scores_filanme), exist_ok=True)
-        # os.makedirs(os.path.dirname(parts_masks_filename), exist_ok=True)
-
-        # np.save(parts_embeddings_filename, results['parts_embeddings'])
-        # np.save(parts_visibility_scores_filanme, results['parts_visibility_scores'])
-        # np.save(parts_masks_filename, results['parts_masks'])
-
-        # print("features saved to {}".format(out_path))
 
         return features, pids, camids, visibility_scores, parts_masks
         
@@ -287,11 +273,9 @@ class Inference():
         return cmc, mAP, ssmd
     
 
-    def run_tracking(self, pids_counts):
+    def run_tracking(self, pids_counts, query_folder, gallery_folder):
         self.writer.test_timer.start()
 
-        query_folder = osp.join(self.dataset_folder, 'query')
-        gallery_folder = osp.join(self.dataset_folder, 'gallery')
         qf, q_pids, q_camids, qf_parts_visibility, q_parts_masks = self.extract_reid_features(query_folder)
         gf, g_pids, g_camids, gf_parts_visibility, g_parts_masks = self.extract_reid_features(gallery_folder)
 
@@ -334,7 +318,7 @@ def most_common(q_pids, g_pids_ranks, distmat_ranks, pids_counts, rank_length):
     assert len(g_pids_ranks) == sum(pids_counts.values())
     # pids_count 是query集中的类别字典，包含key-value为：pid和图片数量
     for i in range(len(pids_counts)):
-        pid = q_pids[index]
+        pid = int(q_pids[index])
         distmat_pid = {}
         for k in range(pids_counts[pid]):
             g_pids_rank = g_pids_ranks[index + k].tolist()
@@ -343,7 +327,7 @@ def most_common(q_pids, g_pids_ranks, distmat_ranks, pids_counts, rank_length):
             for j in range(4, rank_length+1):      # get the first i ranks
                 rank_list_j = g_pids_rank[:j]
                 most_common_gallery_id = max(set(rank_list_j), key=rank_list_j.count)
-                if rank_list_j.count(most_common_gallery_id) / j >= 0.8:     # 众数频率是否超过0.8
+                if rank_list_j.count(most_common_gallery_id) / j >= 0.6:     # 众数频率是否超过0.8
                     most_common_flag = True
                     break
             # rank_list_j = g_pids_rank[:6]
@@ -354,7 +338,7 @@ def most_common(q_pids, g_pids_ranks, distmat_ranks, pids_counts, rank_length):
                 most_common_distmat = [distmat_rank[item] for item in most_common_index]
                 mean_distmat = sum(most_common_distmat[:3])/3.0
                 # print(mean_distmat)
-                if mean_distmat < 0.65:          # distmat 平均特征距离是否小于0.7
+                if mean_distmat < 0.85:          # distmat 平均特征距离是否小于0.7
                     distmat_pid[mean_distmat] = most_common_gallery_id    
 
         if len(distmat_pid) > 0:
@@ -371,8 +355,13 @@ def most_common(q_pids, g_pids_ranks, distmat_ranks, pids_counts, rank_length):
                 continue
             
             min_distmat_pid = distmat_pids[i][min(distmat_pids[i].keys())]
+            distance = min(distmat_pids[i].keys())
+            # 当query ID大于1时，遍历选择每个query ID看是否其选择的匹配距离最小的gallery ID和其他query ID匹配到的相同
+            # 如果相同，谁距离更小和谁匹配，另一个换距离次小的gallery ID
             for j in range(i+1, len(pids)):
-                if min_distmat_pid  == distmat_pids[j][min(distmat_pids[j].keys())]:
+                if not distmat_pids[j].keys():
+                    break
+                if min_distmat_pid == distmat_pids[j][min(distmat_pids[j].keys())]:
                     if min(distmat_pids[i].keys()) < min(distmat_pids[j].keys()):
                         distmat_pids[j].pop(min(distmat_pids[j].keys()))
                     else:
@@ -380,7 +369,8 @@ def most_common(q_pids, g_pids_ranks, distmat_ranks, pids_counts, rank_length):
                         if len(distmat_pids[i]) == 0:
                             break
                         min_distmat_pid = distmat_pids[i][min(distmat_pids[i].keys())]
+                        distance = min(distmat_pids[i].keys())
             if len(distmat_pids[i]) > 0:
-                matched[pids[i]] = min_distmat_pid 
+                matched[pids[i]] = (min_distmat_pid, distance)
          
     return matched

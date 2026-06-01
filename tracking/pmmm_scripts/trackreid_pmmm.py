@@ -58,7 +58,7 @@ class TrackReid_PMMM:
             crop_name = f"frame_{frame_count}_ID_{track_id}.jpg"
             crop_path = os.path.join(self.clops_output_dir, crop_name)
             if crop.size == 0:
-                print(f"警告：裁剪区域为空，边界框: {box}")
+                # print(f"警告：裁剪区域为空，边界框: {box}")
                 continue
             cv2.imwrite(crop_path, crop)
 
@@ -101,7 +101,7 @@ class TrackReid_PMMM:
                 print("gallery_ids: ", abnormal_removed)
                 
                 if gallery_counts > 0:
-                    matched_id = self.reid_inference.run_tracking(pids_counts)
+                    matched_id = self.reid_inference.run_tracking(pids_counts, self.query_dataset_dir, self.gallery_dataset_dir)
                     matched_id_values = list(matched_id.values())
                     if matched_id_values:
                         print(matched_id_values)

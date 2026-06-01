@@ -49,9 +49,10 @@ def visualize_sequence(image_dir, label_file, output_dir,
                 label = class_names[class_id] if class_names else str(class_id)
                 text = f"{track_id} {label}"
                 # 绘制边框 
-                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 3)
+                cv2.rectangle(image, (xmin, ymin), (xmax, ymax), (220, 80, 40), 3)
                 # 绘制文本
-                cv2.putText(image, text, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 0, 0), 3)
+                cv2.rectangle(image, (xmin, ymin - 60), (xmin + 320, ymin), (220, 160, 100), -1) 
+                cv2.putText(image, text, (xmin, ymin - 15), cv2.FONT_HERSHEY_SIMPLEX, 2.0, (255, 255, 255), 5)
         # 写入视频帧
         video_writer.write(image)
     

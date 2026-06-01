@@ -420,7 +420,8 @@ class OSNet(nn.Module):
 
     def forward(self, x, return_featuremaps=False):
         x = self.featuremaps(x)
-        if return_featuremaps:
+        # For part-based models like BPBreID, always return feature maps
+        if return_featuremaps or self.loss == 'part_based':
             return x
         v = self.global_avgpool(x)
         v = v.view(v.size(0), -1)
@@ -472,8 +473,11 @@ def init_pretrained_weights(model, key=''):
         else:
             # Unexpected OSError, re-raise.
             raise
-    filename = key + '_imagenet.pth'
-    cached_file = os.path.join(model_dir, filename)
+    filename = key + '_imagenet.pt'
+    # cached_file = os.path.join(model_dir, filename)
+    cached_file = "/root/autodl-tmp/MOT_WITH_PMMM/bpbreid/weights/bpbreid_pretrained_model/osnet_x1_0_imagenet.pt"
+
+    print(f"cached_file: {cached_file}")
 
     if not os.path.exists(cached_file):
         gdown.download(pretrained_urls[key], cached_file, quiet=False)
